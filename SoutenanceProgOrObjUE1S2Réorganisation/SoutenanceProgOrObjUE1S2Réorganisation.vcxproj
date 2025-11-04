@@ -123,11 +123,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ASCIIART.cpp" />
+    <ClCompile Include="Character.cpp" />
+    <ClCompile Include="CharacterManager.cpp" />
     <ClCompile Include="Game.cpp" />
-    <ClCompile Include="SoutenanceProgOrObjUE1S2Réorganisation.cpp" />
+    <ClCompile Include="InputManager.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Utils.cpp" />
+    <ClCompile Include="Warrior.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ASCIIART.h" />
+    <ClInclude Include="Character.h" />
+    <ClInclude Include="CharacterManager.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="InputManager.h" />
+    <ClInclude Include="Utils.h" />
+    <ClInclude Include="Warrior.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
