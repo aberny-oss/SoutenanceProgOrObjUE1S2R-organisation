@@ -30,6 +30,17 @@ Action InputManager::GetAction() {
 //    return lastKey == key;
 //}
 
+char InputManager::AskMenuKey(const std::vector<char>& allowedKeys) {
+    char key;
+    std::cin >> key;
+
+    if (key >= 'A' && key <= 'Z')
+    {
+        key = key + 32;
+    }
+    lastKey = key;        // Met à jour lastKey pour la suite du code
+    return key;
+}
 
 char InputManager::AskRestrictedKey(const std::vector<char>& allowedKeys) {
     char key;

@@ -22,7 +22,13 @@ public:
     void AddAlly(std::unique_ptr<Character> character);
     void AddEnemy(std::unique_ptr<Character> character);
 
+    // Nombre de character
+    size_t SizeAlly() const;
+    // Nombre d'objets
+    size_t SizeEnemy() const;
+
     Character* GetAlly(int index);
+    std::vector<Character*> GetAllies();
     Character* GetEnemy(int index);
 
     void BuildTeamTable2D(size_t rows, size_t cols);

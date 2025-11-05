@@ -8,12 +8,34 @@ void CharacterManager::AddEnemy(std::unique_ptr<Character> character) {
     enemies.push_back(std::move(character));
 }
 
+// Nombre d'objets
+size_t CharacterManager::SizeAlly() const
+{
+    return allies.size();
+}
+
+// Nombre d'objets
+size_t CharacterManager::SizeEnemy() const
+{
+    return allies.size();
+}
+
 Character* CharacterManager::GetAlly(int index) {
     if (index >= 0 && index < static_cast<int>(allies.size())) {
         return allies[index].get();
     }
     return nullptr;
 }
+
+std::vector<Character*> CharacterManager::GetAllies() {
+    std::vector<Character*> result;
+    for (auto& ptr : allies) {
+        result.push_back(ptr.get());
+    }
+    return result;
+}
+
+
 
 Character* CharacterManager::GetEnemy(int index) {
     if (index >= 0 && index < static_cast<int>(enemies.size())) {

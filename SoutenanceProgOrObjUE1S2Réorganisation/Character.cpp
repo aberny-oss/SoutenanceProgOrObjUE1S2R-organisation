@@ -64,6 +64,43 @@ void Character::AttackByIndex(int index)
     }
 }
 
+void Character::Attack()
+{
+    int intInput;
+    system("cls");
+    std::cout << "Quel attaque voulez vous utiliser ? \n" << std::endl;
+    int nbAttacks = GetNbAttacks();
+    std::cout << "Nombre d'attaques du joueur : " << nbAttacks << std::endl;
+    std::cout << "Choisissez une attaque (1-" << nbAttacks << "): ";
+    intInput = utils.AskInt("", 1, nbAttacks);
+    system("cls");
+    AttackByIndex(intInput);
+
+    while (true)
+    {
+
+        std::cout << "Sur qui ? (Entre son numero) \n" << std::endl;
+        std::cin >> intInput;
+
+        int position = 0;
+        if (intInput < 1 || intInput > manageCharacter.SizeAlly())
+        {
+            std::cout << "Nombre trop grand ou trop petit !" << std::endl;
+        }
+        if (position == intInput)
+        {
+            std::cout << position;
+            break;
+        }
+        position += 1;
+    }
+
+}
+void Character::Heal()
+{
+
+}
+
 void Character::TakeDamage(int dmg) {
     // On applique les dégâts
     health -= dmg;

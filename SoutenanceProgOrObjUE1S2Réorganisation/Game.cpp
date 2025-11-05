@@ -74,7 +74,7 @@ void Game::ShowMenuPrincipal()
     art.ArtConsoleMenu(action); // affiche menu initial
     while (true) {
         std::vector<char> menuKeys = { 'c', 'q' };
-        char key = inputManager->AskRestrictedKey(menuKeys);
+        char key = inputManager->AskMenuKey(menuKeys);
         // gestion selon le résultat
 
 
@@ -155,6 +155,10 @@ void Game::HandleCombat()
         switch (key)
         {
         case'a':
+            for (Character* c : characterManager->GetAllies()) {
+                if (c) c->Attack();
+            }
+
             break;
         case's':
             break;

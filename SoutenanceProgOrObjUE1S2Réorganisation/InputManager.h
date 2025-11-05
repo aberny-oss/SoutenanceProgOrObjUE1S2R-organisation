@@ -29,4 +29,5 @@ public:
     //bool IsKeyPressed(char key); // Vérifie si une touche spécifique est pressée
 
 	char AskRestrictedKey(const std::vector<char>& allowedKeys); // Demande une touche parmi une liste restreinte
+    char AskMenuKey(const std::vector<char>& allowedKeys); // Demande une touche parmi une liste restreinte
 };

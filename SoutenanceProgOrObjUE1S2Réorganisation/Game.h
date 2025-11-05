@@ -5,6 +5,7 @@
 #include "CharacterManager.h"
 #include "InputManager.h"
 #include "ASCIIART.h"
+#include "Character.h"
 
 enum class GameState {
     MENU,
