@@ -10,6 +10,10 @@ std::string Character::GetTeam() const
     return team;
 }
 
+int Character::GetHealth() const
+{
+    return health;
+}
 
 // Nombre d'attaques disponibles
 int Character::GetNbAttacks() const {
@@ -22,25 +26,17 @@ void Character::DisplayAttacks() const {
         std::cout << name << " n’a aucune attaque.\n";
         return;
     }
-
-    std::cout << name << " Peut utiliser comme attaque : ";
+    std::cout << name << " peut utiliser les attaques suivantes :\n";
+    std::cout << "Index | Attaque     | Degats\n";
+    std::cout << "-------------------------------\n";
     for (size_t i = 0; i < attacks.size(); ++i) {
-        std::cout << (i + 1) << ": " << attacks[i];
-        if (i != attacks.size() - 1)
-            std::cout << " | ";
+        std::cout << "  " << (i + 1) << "   | "
+            << attacks[i] << std::string(12 - attacks[i].size(), ' ')
+            << "|   " << GetAttackDamage(i)
+            << "\n";
     }
-    std::cout << "\n";
+    std::cout << std::endl;
 }
-
-//// Utilise une attaque selon son index
-//void Character::UseAttackByIndex(int index) {
-//    switch (index) {
-//    case 1: SimpleAttack(); break;
-//    case 2: HeavyAttack(); break;
-//    case 3: UltimeAttack(); break;
-//    default: std::cout << "Attaque invalide !\n"; break;
-//    }
-//}
 
 void Character::AttackByIndex(int index)
 {
@@ -62,43 +58,6 @@ void Character::AttackByIndex(int index)
         }
         position += 1;
     }
-}
-
-void Character::Attack()
-{
-    int intInput;
-    system("cls");
-    std::cout << "Quel attaque voulez vous utiliser ? \n" << std::endl;
-    int nbAttacks = GetNbAttacks();
-    std::cout << "Nombre d'attaques du joueur : " << nbAttacks << std::endl;
-    std::cout << "Choisissez une attaque (1-" << nbAttacks << "): ";
-    intInput = utils.AskInt("", 1, nbAttacks);
-    system("cls");
-    AttackByIndex(intInput);
-
-    while (true)
-    {
-
-        std::cout << "Sur qui ? (Entre son numero) \n" << std::endl;
-        std::cin >> intInput;
-
-        int position = 0;
-        if (intInput < 1 || intInput > manageCharacter.SizeAlly())
-        {
-            std::cout << "Nombre trop grand ou trop petit !" << std::endl;
-        }
-        if (position == intInput)
-        {
-            std::cout << position;
-            break;
-        }
-        position += 1;
-    }
-
-}
-void Character::Heal()
-{
-
 }
 
 void Character::TakeDamage(int dmg) {

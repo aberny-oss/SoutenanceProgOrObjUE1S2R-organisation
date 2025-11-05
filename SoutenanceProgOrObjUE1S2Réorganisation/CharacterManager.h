@@ -3,9 +3,8 @@
 #include <string>
 #include <vector>
 #include <memory>
-#include "Character.h"
-#include "Warrior.h"
 #include "Utils.h"
+#include "Character.h"
 
 class CharacterManager {
 private:
@@ -14,6 +13,7 @@ private:
     std::vector<std::vector<Character*>> table2D;
     size_t tableRows;
     size_t tableCols;
+    Utils utils;
 
 public:
     CharacterManager() :tableRows(0), tableCols(0) {
@@ -28,16 +28,25 @@ public:
     size_t SizeEnemy() const;
 
     Character* GetAlly(int index);
-    std::vector<Character*> GetAllies();
     Character* GetEnemy(int index);
 
+    std::vector<Character*> GetAllies()const;
+    std::vector<Character*> GetEnemies() const;
+
+
     void BuildTeamTable2D(size_t rows, size_t cols);
-    void BuildPriorityTable2D(size_t rows, size_t cols);
+    void BuildEnemyTable2D(size_t rows, size_t cols);
+    void BuildPriorityTable2D(size_t cols);
 	void DisplayTable2D() const;
 
-    void RemoveAlly(int index);
-    void RemoveEnemy(int index);
+    void CombatTurn();
 
     int GetAllyCount() const;
     int GetEnemyCount() const;
+
+    void RemoveDeadCharacters();
+
+    bool AreAllPlayersDead() const;
+    bool AreAllEnemiesDead() const;
+
 };

@@ -1,8 +1,41 @@
 #include "Game.h"
 
 void Game::Init() {
-    characterManager->AddEnemy(std::make_unique<Warrior>("Ennemy1", "Ennemy"));
-    characterManager->AddEnemy(std::make_unique<Warrior>("Ennemy2", "Ennemy"));
+    int enemyCount = 5;
+    for (int i = 1; i <= enemyCount; ++i) {
+        int level = Utils::GenerateRandomNumber(1, 5);
+        int health = 100 + (level - 1) * 20;
+        std::string name = "Ennemy" + std::to_string(i);
+
+        characterManager->AddEnemy(std::make_unique<Warrior>(name, level, health, "Ennemy"));
+
+  //      if (i == 1) {
+  //          characterManager->AddEnemy(std::make_unique<Warrior>(name, level, health, "Ennemy"));
+  //      }
+  //      else if (i == 2) {
+  //          characterManager->AddEnemy(std::make_unique<Mage>(name, level, health, "Ennemy"));
+  //      }
+  //      else if (i == 3) {
+  //          characterManager->AddEnemy(std::make_unique<Goblin>(name, level, health, "Ennemy"));
+  //      }
+  //      else
+  //      {
+  //          // Tirage aléatoire de la classe
+  //          int type = Utils::GenerateRandomNumber(1, 3); // 1=Warrior, 2=Mage, 3=Goblin
+  //          switch (type)
+  //          {
+  //          case 1:
+  //              characterManager->AddEnemy(std::make_unique<Warrior>(name, level, health, "Ennemy"));
+  //              break;
+  //          case 2:
+  //              characterManager->AddEnemy(std::make_unique<Mage>(name, level, health, "Ennemy"));
+  //              break;
+  //          case 3:
+  //              characterManager->AddEnemy(std::make_unique<Goblin>(name, level, health, "Ennemy"));
+  //              break;
+  //          }
+		//}
+    }
 }
 
 void Game::CreateCharacter()
@@ -21,15 +54,21 @@ void Game::CreateCharacter()
 
         if (type == "warrior")
         {
-            return  characterManager->AddAlly(std::make_unique<Warrior>(name, "Player"));
+			int level = 8;
+            int health = 100 + (level - 1) * 20;
+            return  characterManager->AddAlly(std::make_unique<Warrior>(name, level, health, "Player"));
         }
         /*else if (type == "mage")
         {
-            return  characterManager->AddAlly(std::make_unique<Mage>(name, "Player"));
+            int level = 8;
+            int health = 100 + (level - 1) * 20;
+            return  characterManager->AddAlly(std::make_unique<Mage>(name, level, health, "Player"));
         }*/
         /*else if (type == "goblin")
         {
-            return  characterManager->AddAlly(std::make_unique<Goblin>(name, "Player"));
+            int level = 8;
+            int health = 100 + (level - 1) * 20;
+            return  characterManager->AddAlly(std::make_unique<Goblin>(name, level, health, "Player"));
         }*/
 
         system("cls");
@@ -46,14 +85,27 @@ void Game::Run() {
             {
             case 0: ShowMenuPrincipal(); break;
             case 1: ShowMenuPerso(); break;
+			case 2: ShowMenuWinFight(); break;
             }
         }
 
         switch (currentState) {
-        case GameState::COMBAT: HandleCombat(); break;
-        case GameState::VICTORY: HandleVictory(); break;
-        case GameState::DEFEAT: HandleDefeat(); break;
-        case GameState::QUIT: Shutdown(); break;
+            case GameState::COMBAT:
+                characterManager->CombatTurn();
+                characterManager->RemoveDeadCharacters();
+                if (characterManager->AreAllPlayersDead())
+                {
+                    currentState = GameState::DEFEAT;
+                }
+                else if(characterManager->AreAllEnemiesDead())
+                {
+				    menuIndex = 2;
+                    currentState = GameState::MENU;
+			    }
+                break;
+            case GameState::VICTORY: HandleVictory(); break;
+            case GameState::DEFEAT: HandleDefeat(); break;
+            case GameState::QUIT: Shutdown(); break;
         }
     }
 }
@@ -136,42 +188,37 @@ void Game::ShowMenuPerso()
             currentState = GameState::QUIT;
             break;
         }
-        stay = false;
+		stay = false;
     }
 }
 
-void Game::HandleCombat()
+void Game::ShowMenuWinFight()
 {
-    characterManager->BuildPriorityTable2D(2, 2);
 	system("cls");
-    while (true)
-    {
-        characterManager->DisplayTable2D();
-        std::cout << "\n" << std::endl;
-        std::cout << "Que souhaite vous faire Attaquer (A), vous Soigner (S) ou Quitter le jeu (Q)" << std::endl;
-        std::vector<char> menuKeys = { 'a', 'c', 'q' };
-        char key = inputManager->AskRestrictedKey(menuKeys);
-
-        switch (key)
-        {
-        case'a':
-            for (Character* c : characterManager->GetAllies()) {
-                if (c) c->Attack();
-            }
-
-            break;
-        case's':
-            break;
-        case'q':
-            break;
-        }
+	std::cout << "\n" << std::endl;
+    std::cout << R"(
++===========================+
+|         VICTOIRE !        |
+|   Tu as gagne le combat   |
+|  Tes heros sont vaillants |
+|    Qu veux-tu faire ?     |
+| (c: Continuer, q: Quitter)|
++===========================+
+)" << std::endl;
+    std::cout << "\n" << std::endl;
+    std::vector<char> menuKeys = { 'c', 'q' };
+    char key = inputManager->AskMenuKey(menuKeys);
+    if (key == 'c') {
+		menuIndex = 1; // Retour au menu perso pour continuer le combat
     }
+    else if (key == 'q') {
+		currentState = GameState::QUIT;
+	}
+
 }
-
-
 
 void Game::HandleVictory() {
-    std::cout << "[VICTOIRE] (c: rejouer, q: quitter)" << std::endl;
+    std::cout << "[VICTOIRE] (c: Rejouer, q: Quitter)" << std::endl;
     Action action = inputManager->GetAction();
 
     if (action == Action::CONTINUE) {

@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 #include <Windows.h>
+#include <cstdlib>
+#include <ctime>
 
 class Utils
 {
@@ -14,6 +16,12 @@ public:
 
 	static int getTerminalWidth();
 	static int getTerminalHeight();
+
+	// Méthode statique d'initialisation du seed
+	static void InitRandom();
+
+	// Méthode statique pour générer un nombre aléatoire
+	static int GenerateRandomNumber(int min, int max);
 
 };
 

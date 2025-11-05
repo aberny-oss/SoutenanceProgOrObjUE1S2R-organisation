@@ -1,11 +1,14 @@
 #pragma once
 #include <iostream>
+//#include <vector>
+//#include <string>
 #include <memory>
 #include <limits>
 #include "CharacterManager.h"
 #include "InputManager.h"
 #include "ASCIIART.h"
 #include "Character.h"
+#include "Warrior.h"
 
 enum class GameState {
     MENU,
@@ -30,8 +33,8 @@ private:
     //menu
     void ShowMenuPrincipal();
     void ShowMenuPerso();
+	void ShowMenuWinFight();
 
-    void HandleCombat();
     void HandleVictory();
     void HandleDefeat();
 

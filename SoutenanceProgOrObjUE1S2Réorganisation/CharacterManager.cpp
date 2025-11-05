@@ -27,7 +27,14 @@ Character* CharacterManager::GetAlly(int index) {
     return nullptr;
 }
 
-std::vector<Character*> CharacterManager::GetAllies() {
+Character* CharacterManager::GetEnemy(int index) {
+    if (index >= 0 && index < static_cast<int>(enemies.size())) {
+        return enemies[index].get();
+    }
+    return nullptr;
+}
+
+std::vector<Character*> CharacterManager::GetAllies() const {
     std::vector<Character*> result;
     for (auto& ptr : allies) {
         result.push_back(ptr.get());
@@ -35,13 +42,12 @@ std::vector<Character*> CharacterManager::GetAllies() {
     return result;
 }
 
-
-
-Character* CharacterManager::GetEnemy(int index) {
-    if (index >= 0 && index < static_cast<int>(enemies.size())) {
-        return enemies[index].get();
+std::vector<Character*> CharacterManager::GetEnemies() const {
+    std::vector<Character*> result;
+    for (const auto& ptr : enemies) {
+        result.push_back(ptr.get());
     }
-    return nullptr;
+    return result;
 }
 
 // On suppose que table2D, objects, etc. sont des membres de la classe qui gère les personnages
@@ -74,7 +80,7 @@ void CharacterManager::BuildTeamTable2D(size_t rows, size_t cols)
     }
 }
 
-void CharacterManager::BuildPriorityTable2D(size_t rows, size_t cols)
+void CharacterManager::BuildEnemyTable2D(size_t rows, size_t cols)
 {
     tableRows = rows;
     tableCols = cols;
@@ -83,34 +89,52 @@ void CharacterManager::BuildPriorityTable2D(size_t rows, size_t cols)
 
     size_t r = 0, c = 0;
 
-    // D'abord les ennemis
-    for (const std::unique_ptr<Character>& ennemi : enemies) {
-        if (!ennemi)
+    // Placer d'abord les objets prioritaires
+    for (auto& obj : enemies) {
+        if (!obj)
+        {
             continue;
-        table2D[r][c] = ennemi.get();
-        c++;
-        if (c >= cols) {
-            c = 0; r++;
         }
-        if (r >= rows) {
-            return;
+        table2D[r][c] = obj.get(); // obj = std::unique_ptr<Character>
+        ++c;
+        if (c >= cols)
+        {
+            c = 0; ++r;
+        }
+        if (r >= rows)
+        {
+            return; // tableau plein
+        }
+
+    }
+}
+
+void CharacterManager::BuildPriorityTable2D(size_t cols)
+{
+    tableRows = 2; // 1 ligne pour ennemis, 1 pour alliés
+    tableCols = cols;
+    table2D.clear();
+    table2D.resize(tableRows, std::vector<Character*>(cols, nullptr));
+
+    // Positionne les ennemis sur la première ligne
+    size_t enemyIndex = 0;
+    for (size_t j = 0; j < cols; ++j) {
+        if (enemyIndex < enemies.size()) {
+            table2D[0][j] = enemies[enemyIndex].get();
+            enemyIndex++;
         }
     }
 
-    // Puis les alliés
-    for (const std::unique_ptr<Character>& ally : allies) {
-        if (!ally)
-            continue;
-        table2D[r][c] = ally.get();
-        c++;
-        if (c >= cols) {
-            c = 0; r++;
-        }
-        if (r >= rows) {
-            return;
+    // Positionne les alliés sur la deuxième ligne
+    size_t allyIndex = 0;
+    for (size_t j = 0; j < cols; ++j) {
+        if (allyIndex < allies.size()) {
+            table2D[1][j] = allies[allyIndex].get();
+            allyIndex++;
         }
     }
 }
+
 
 
 void CharacterManager::DisplayTable2D() const
@@ -149,8 +173,6 @@ void CharacterManager::DisplayTable2D() const
                 else
                 {
                     line_content += std::string(allASCII[j][0].size(), ' ');
-                    // Séparateur optionnel entre colonnes
-                    line_content += " ";
                 }
             }
             // 3. Calcul du padding global pour centrer la LIGNE ENTIÈRE
@@ -165,17 +187,41 @@ void CharacterManager::DisplayTable2D() const
     }
 }
 
-
-void CharacterManager::RemoveAlly(int index) {
-    if (index >= 0 && index < static_cast<int>(allies.size())) {
-        allies.erase(allies.begin() + index);
+void CharacterManager::CombatTurn()
+{
+    // Sélection du personnage actif
+#undef max
+    size_t maxColsCount = std::max(GetAllyCount(), GetEnemyCount());
+    if (maxColsCount == 0)
+    {
+        maxColsCount = 1; // Pour ne jamais avoir 0 colonnes
     }
-}
+    BuildPriorityTable2D(maxColsCount);
+	DisplayTable2D();
+    std::vector<Character*> allies = GetAllies();
+    int idx = utils.AskInt("Choisissez un allie a jouer (1, 2, 3...) : ", 1, allies.size());
+    Character* active = allies[idx - 1];
 
-void CharacterManager::RemoveEnemy(int index) {
-    if (index >= 0 && index < static_cast<int>(enemies.size())) {
-        enemies.erase(enemies.begin() + index);
-    }
+    // Affichage et sélection de l’attaque
+    system("cls");
+	active->Display();
+    active->DisplayAttacks();
+    int attackIndex = utils.AskInt("Choisissez une attaque : ", 1, active->GetNbAttacks());
+
+    // Sélection de la cible parmi les ennemis
+    system("cls");
+    BuildPriorityTable2D(maxColsCount);
+    DisplayTable2D();
+    std::vector<Character*> enemies = GetEnemies();
+    int targetIndex = utils.AskInt("Choisissez la cible (1, 2, 3...) : ", 1, enemies.size());
+    Character* target = enemies[targetIndex - 1];
+
+    system("cls");
+    BuildPriorityTable2D(maxColsCount);
+    DisplayTable2D();
+    // Le personnage effectue l’attaque sur la cible
+    active->PerformAttack(attackIndex - 1, *target);
+    RemoveDeadCharacters();
 }
 
 int CharacterManager::GetAllyCount() const {
@@ -184,4 +230,43 @@ int CharacterManager::GetAllyCount() const {
 
 int CharacterManager::GetEnemyCount() const {
     return static_cast<int>(enemies.size());
+}
+
+void CharacterManager::RemoveDeadCharacters()
+{
+    // Pour les alliés
+    allies.erase(
+        std::remove_if(allies.begin(), allies.end(),
+            [](const std::unique_ptr<Character>& c) {
+                return c && c->GetHealth() <= 0 && c->GetTeam() == "Player";
+            }),
+        allies.end());
+
+    // Pour les ennemis
+    enemies.erase(
+        std::remove_if(enemies.begin(), enemies.end(),
+            [](const std::unique_ptr<Character>& c) {
+                return c && c->GetHealth() <= 0 && c->GetTeam() == "Ennemy";
+            }),
+        enemies.end());
+}
+
+bool CharacterManager::AreAllPlayersDead() const
+{
+    for (const auto& ally : allies) {
+        if (ally && ally->GetHealth() > 0) {
+            return false; // Au moins un joueur vivant
+        }
+    }
+    return true; // Aucun joueur survivant
+}
+
+bool CharacterManager::AreAllEnemiesDead() const
+{
+    for (const auto& enemy : enemies) {
+        if (enemy && enemy->GetHealth() > 0) {
+            return false; // Au moins un ennemi vivant
+        }
+    }
+    return true; // Aucun ennemi survivant
 }

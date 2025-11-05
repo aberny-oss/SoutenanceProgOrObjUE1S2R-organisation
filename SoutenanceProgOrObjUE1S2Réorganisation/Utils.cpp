@@ -74,3 +74,13 @@ int Utils::getTerminalHeight() {
     }
     return rows;
 }
+
+// Méthode statique d'initialisation du seed
+void Utils::InitRandom() {
+    srand(static_cast<unsigned>(time(0)));
+}
+
+// Méthode statique pour générer un nombre aléatoire
+int Utils::GenerateRandomNumber(int min, int max) {
+    return min + rand() % (max + 1 - min);
+}

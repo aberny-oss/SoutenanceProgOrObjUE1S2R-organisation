@@ -3,8 +3,7 @@
 #include <vector>
 #include <iostream>
 #include <iomanip>
-#include "CharacterManager.h"
-#include "Utils.h"
+
 
 class Character {
 protected:
@@ -14,27 +13,27 @@ protected:
     int health;
     std::vector<std::string> attacks;
     std::string team;
-    Utils utils;
-    CharacterManager manageCharacter;
 
 public:
     Character(const std::string& name, const std::string& type, int level, int health, const std::string& team)
         : name(name), type(type), level(level), health(health), team(team) {
     }
 
+    virtual std::vector<std::string> Display() const = 0;  // Retourne l'ASCII art ligne par ligne
+
     std::string GetName() const;
     std::string GetTeam() const;
+    int GetHealth() const;
 
     // Getter moderne
     int GetNbAttacks() const;
+
+    virtual int GetAttackDamage(size_t index) const = 0;
     void DisplayAttacks() const;
-    /*virtual void UseAttackByIndex(int index);*/
     void AttackByIndex(int index);
 
-    void Attack();
-    void Heal();
+    virtual void PerformAttack(int attackIndex, Character& target) = 0;
+
     void TakeDamage(int dmg);
     void Heal(int amount);
-
-    virtual std::vector<std::string> Display() const = 0;  // Retourne l'ASCII art ligne par ligne
 };
