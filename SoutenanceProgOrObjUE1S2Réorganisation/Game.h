@@ -30,7 +30,7 @@ private:
     void ShowMenuPrincipal();
     void ShowMenuPerso();
 
-    //void HandleCombat();
+    void HandleCombat();
     void HandleVictory();
     void HandleDefeat();
 

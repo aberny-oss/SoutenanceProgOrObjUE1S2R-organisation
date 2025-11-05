@@ -14,7 +14,7 @@ void InputManager::Update() {
 Action InputManager::GetAction() {
     switch (lastKey) {
     case 'a': return Action::ATTACK;
-    case 'd': return Action::DEFEND;
+    case 's': return Action::HEAL;
     case 'p': return Action::MENU_PERSO;
     case 'q': return Action::QUIT;
     case 'c': return Action::CONTINUE;
@@ -34,7 +34,6 @@ Action InputManager::GetAction() {
 char InputManager::AskRestrictedKey(const std::vector<char>& allowedKeys) {
     char key;
     while (true) {
-        std::cout << "\n> Entrez votre choix : ";
         std::cin >> key;
 
         if (key >= 'A' && key <= 'Z')

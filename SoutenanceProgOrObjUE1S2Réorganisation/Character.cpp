@@ -23,7 +23,7 @@ void Character::DisplayAttacks() const {
         return;
     }
 
-    std::cout << name << " peut utiliser : ";
+    std::cout << name << " Peut utiliser comme attaque : ";
     for (size_t i = 0; i < attacks.size(); ++i) {
         std::cout << (i + 1) << ": " << attacks[i];
         if (i != attacks.size() - 1)

@@ -26,6 +26,7 @@ public:
     Character* GetEnemy(int index);
 
     void BuildTeamTable2D(size_t rows, size_t cols);
+    void BuildPriorityTable2D(size_t rows, size_t cols);
 	void DisplayTable2D() const;
 
     void RemoveAlly(int index);

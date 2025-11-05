@@ -50,7 +50,7 @@ void Game::Run() {
         }
 
         switch (currentState) {
-            //case GameState::COMBAT: HandleCombat(); break;
+        case GameState::COMBAT: HandleCombat(); break;
         case GameState::VICTORY: HandleVictory(); break;
         case GameState::DEFEAT: HandleDefeat(); break;
         case GameState::QUIT: Shutdown(); break;
@@ -66,18 +66,6 @@ void Game::Shutdown() {
 //void Game::Display() {
 //    std::cout << "--- Affichage de l'état du jeu ---" << std::endl;
 //    // Ici, on pourrait afficher les états, la vie, etc.
-//}
-
-//void Game::HandleMenu() {
-//    std::cout << "[MENU] (s: start, q: quitter)" << std::endl;
-//	Action action = inputManager->GetAction();
-//
-//    if (action == Action::MENU_START) {
-//        ChangeState(GameState::COMBAT);
-//    }
-//    else if (action == Action::QUIT) {
-//        isRunning = false;
-//    }
 //}
 
 void Game::ShowMenuPrincipal()
@@ -135,26 +123,45 @@ void Game::ShowMenuPerso()
             }
         }
 		std::cout << "\n" << std::endl;
-        std::cout << "Que souhaite vous faire Combattre (c) ou quitter le jeu (q)" << std::endl;
+        std::cout << "Que souhaite vous faire Combattre (C) ou quitter le jeu (Q)" << std::endl;
         std::vector<char> menuKeys = { 'c', 'q' };
         char key = inputManager->AskRestrictedKey(menuKeys);
 
-        if (key == 'c')
+        switch (key)
         {
+        case'c':
             currentState = GameState::COMBAT;
             break;
-        }
-        else if (key == 'q')
-        {
+        case'q':
             currentState = GameState::QUIT;
             break;
         }
-
         stay = false;
     }
+}
 
+void Game::HandleCombat()
+{
+    characterManager->BuildPriorityTable2D(2, 2);
+	system("cls");
+    while (true)
+    {
+        characterManager->DisplayTable2D();
+        std::cout << "\n" << std::endl;
+        std::cout << "Que souhaite vous faire Attaquer (A), vous Soigner (S) ou Quitter le jeu (Q)" << std::endl;
+        std::vector<char> menuKeys = { 'a', 'c', 'q' };
+        char key = inputManager->AskRestrictedKey(menuKeys);
 
-
+        switch (key)
+        {
+        case'a':
+            break;
+        case's':
+            break;
+        case'q':
+            break;
+        }
+    }
 }
 
 

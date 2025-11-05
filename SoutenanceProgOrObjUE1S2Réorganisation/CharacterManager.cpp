@@ -52,6 +52,45 @@ void CharacterManager::BuildTeamTable2D(size_t rows, size_t cols)
     }
 }
 
+void CharacterManager::BuildPriorityTable2D(size_t rows, size_t cols)
+{
+    tableRows = rows;
+    tableCols = cols;
+    table2D.clear();
+    table2D.resize(rows, std::vector<Character*>(cols, nullptr));
+
+    size_t r = 0, c = 0;
+
+    // D'abord les ennemis
+    for (const std::unique_ptr<Character>& ennemi : enemies) {
+        if (!ennemi)
+            continue;
+        table2D[r][c] = ennemi.get();
+        c++;
+        if (c >= cols) {
+            c = 0; r++;
+        }
+        if (r >= rows) {
+            return;
+        }
+    }
+
+    // Puis les alliés
+    for (const std::unique_ptr<Character>& ally : allies) {
+        if (!ally)
+            continue;
+        table2D[r][c] = ally.get();
+        c++;
+        if (c >= cols) {
+            c = 0; r++;
+        }
+        if (r >= rows) {
+            return;
+        }
+    }
+}
+
+
 void CharacterManager::DisplayTable2D() const
 {
     int term_width = Utils::getTerminalWidth();

@@ -8,7 +8,7 @@
 enum class Action {
     NONE,
     ATTACK,
-    DEFEND,
+    HEAL,
     MENU_PERSO,
     MENU_QUIT,
     CONTINUE,
