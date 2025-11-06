@@ -1,40 +1,40 @@
 #include "Game.h"
 
 void Game::Init() {
-    int enemyCount = 5;
+    int enemyCount = 3;
     for (int i = 1; i <= enemyCount; ++i) {
         int level = Utils::GenerateRandomNumber(1, 5);
-        int health = 100 + (level - 1) * 20;
+        int whealth = 120 + (level - 1) * 20;
+        int mhealth = 100 + (level - 1) * 20;
+        int ghealth = 80 + (level - 1) * 20;
         std::string name = "Ennemy" + std::to_string(i);
 
-        characterManager->AddEnemy(std::make_unique<Warrior>(name, level, health, "Ennemy"));
-
-  //      if (i == 1) {
-  //          characterManager->AddEnemy(std::make_unique<Warrior>(name, level, health, "Ennemy"));
-  //      }
-  //      else if (i == 2) {
-  //          characterManager->AddEnemy(std::make_unique<Mage>(name, level, health, "Ennemy"));
-  //      }
-  //      else if (i == 3) {
-  //          characterManager->AddEnemy(std::make_unique<Goblin>(name, level, health, "Ennemy"));
-  //      }
-  //      else
-  //      {
-  //          // Tirage aléatoire de la classe
-  //          int type = Utils::GenerateRandomNumber(1, 3); // 1=Warrior, 2=Mage, 3=Goblin
-  //          switch (type)
-  //          {
-  //          case 1:
-  //              characterManager->AddEnemy(std::make_unique<Warrior>(name, level, health, "Ennemy"));
-  //              break;
-  //          case 2:
-  //              characterManager->AddEnemy(std::make_unique<Mage>(name, level, health, "Ennemy"));
-  //              break;
-  //          case 3:
-  //              characterManager->AddEnemy(std::make_unique<Goblin>(name, level, health, "Ennemy"));
-  //              break;
-  //          }
-		//}
+        if (i == 1) {
+            characterManager->AddEnemy(std::make_unique<Warrior>(name, level, whealth, "Ennemy"));
+        }
+        else if (i == 2) {
+            characterManager->AddEnemy(std::make_unique<Mage>(name, level, mhealth, "Ennemy"));
+        }
+        else if (i == 3) {
+            characterManager->AddEnemy(std::make_unique<Goblin>(name, level, ghealth, "Ennemy"));
+        }
+        else
+        {
+            // Tirage aléatoire de la classe
+            int type = Utils::GenerateRandomNumber(1, 3); // 1=Warrior, 2=Mage, 3=Goblin
+            switch (type)
+            {
+            case 1:
+                characterManager->AddEnemy(std::make_unique<Warrior>(name, level, whealth, "Ennemy"));
+                break;
+            case 2:
+                characterManager->AddEnemy(std::make_unique<Mage>(name, level, mhealth, "Ennemy"));
+                break;
+            case 3:
+                characterManager->AddEnemy(std::make_unique<Goblin>(name, level, ghealth, "Ennemy"));
+                break;
+            }
+		}
     }
 }
 
@@ -55,21 +55,21 @@ void Game::CreateCharacter()
         if (type == "warrior")
         {
 			int level = 8;
-            int health = 100 + (level - 1) * 20;
-            return  characterManager->AddAlly(std::make_unique<Warrior>(name, level, health, "Player"));
+            int whealth = 120 + (level - 1) * 20;
+            return  characterManager->AddAlly(std::make_unique<Warrior>(name, level, whealth, "Player"));
         }
-        /*else if (type == "mage")
+        else if (type == "mage")
         {
             int level = 8;
-            int health = 100 + (level - 1) * 20;
-            return  characterManager->AddAlly(std::make_unique<Mage>(name, level, health, "Player"));
-        }*/
-        /*else if (type == "goblin")
+            int mhealth = 100 + (level - 1) * 20;
+            return  characterManager->AddAlly(std::make_unique<Mage>(name, level, mhealth, "Player"));
+        }
+        else if (type == "goblin")
         {
             int level = 8;
-            int health = 100 + (level - 1) * 20;
-            return  characterManager->AddAlly(std::make_unique<Goblin>(name, level, health, "Player"));
-        }*/
+            int ghealth = 80 + (level - 1) * 20;
+            return  characterManager->AddAlly(std::make_unique<Goblin>(name, level, ghealth, "Player"));
+        }
 
         system("cls");
         std::cout << "Type invalide. Reessaie !" << std::endl;
@@ -91,7 +91,15 @@ void Game::Run() {
 
         switch (currentState) {
             case GameState::COMBAT:
-                characterManager->CombatTurn();
+                CombatTurn();
+                if (combatIndex == 1)
+                {
+                    characterManager->Attack();
+                }
+                else if (combatIndex == 2)
+                {
+                    characterManager->Heal();
+                }
                 characterManager->RemoveDeadCharacters();
                 if (characterManager->AreAllPlayersDead())
                 {
@@ -102,6 +110,7 @@ void Game::Run() {
 				    menuIndex = 2;
                     currentState = GameState::MENU;
 			    }
+                characterManager->EnemyATK();
                 break;
             case GameState::VICTORY: HandleVictory(); break;
             case GameState::DEFEAT: HandleDefeat(); break;
@@ -178,6 +187,7 @@ void Game::ShowMenuPerso()
         std::cout << "Que souhaite vous faire Combattre (C) ou quitter le jeu (Q)" << std::endl;
         std::vector<char> menuKeys = { 'c', 'q' };
         char key = inputManager->AskRestrictedKey(menuKeys);
+        system("cls");
 
         switch (key)
         {
@@ -189,6 +199,30 @@ void Game::ShowMenuPerso()
             break;
         }
 		stay = false;
+    }
+}
+
+void Game::CombatTurn()
+{
+    // Sélection du personnage actif
+#undef max
+    size_t maxColsCount = std::max(characterManager->GetAllyCount(), characterManager->GetEnemyCount());
+    if (maxColsCount == 0)
+    {
+        maxColsCount = 1; // Pour ne jamais avoir 0 colonnes
+    }
+    characterManager->BuildPriorityTable2D(maxColsCount);
+    characterManager->DisplayTable2D();
+    std::cout << "Voulez vous Attaquer (A) ou vous Soigner (S)" << std::endl;
+    std::vector<char> menuKeys = { 'a', 's' };
+    int key = inputManager->AskRestrictedKey(menuKeys);
+    if (key == 'a')
+    {
+        combatIndex = 1;
+    }
+    else if (key == 's')
+    {
+        combatIndex = 2;
     }
 }
 

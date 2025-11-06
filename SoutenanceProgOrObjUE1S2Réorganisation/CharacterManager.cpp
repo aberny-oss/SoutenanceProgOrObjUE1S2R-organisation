@@ -1,11 +1,11 @@
 ﻿#include "CharacterManager.h"
 
-void CharacterManager::AddAlly(std::unique_ptr<Character> character) {
-    allies.push_back(std::move(character));
+void CharacterManager::AddAlly(Character* character) {
+    allies.push_back(character);
 }
 
-void CharacterManager::AddEnemy(std::unique_ptr<Character> character) {
-    enemies.push_back(std::move(character));
+void CharacterManager::AddEnemy(Character* character) {
+    enemies.push_back(character);
 }
 
 // Nombre d'objets
@@ -17,7 +17,7 @@ size_t CharacterManager::SizeAlly() const
 // Nombre d'objets
 size_t CharacterManager::SizeEnemy() const
 {
-    return allies.size();
+    return enemies.size();
 }
 
 Character* CharacterManager::GetAlly(int index) {
@@ -187,7 +187,42 @@ void CharacterManager::DisplayTable2D() const
     }
 }
 
-void CharacterManager::CombatTurn()
+void CharacterManager::Attack()
+{
+    // Sélection du personnage actif
+#undef max
+    size_t maxColsCount = std::max(GetAllyCount(), GetEnemyCount());
+    if (maxColsCount == 0)
+    {
+        maxColsCount = 1; // Pour ne jamais avoir 0 colonnes
+    }
+    /*std::vector<Character*> allies = GetAllies();*/
+    allies = GetAllies();
+    int idx = utils.AskInt("Choisissez un allie a jouer (1, 2, 3...) : ", 1, allies.size());
+    Character* active = allies[idx - 1];
+
+    // Affichage et sélection de l’attaque
+    system("cls");
+    active->Display();
+    active->DisplayAttacks();
+    int attackIndex = utils.AskInt("Choisissez une attaque : ", 1, active->GetNbAttacks());
+
+    // Sélection de la cible parmi les ennemis
+    system("cls");
+    BuildPriorityTable2D(maxColsCount);
+    DisplayTable2D();
+    enemies = GetEnemies();
+    int targetIndex = utils.AskInt("Choisissez la cible (1, 2, 3...) : ", 1, enemies.size());
+    Character* target = enemies[targetIndex - 1];
+
+    system("cls");
+    // Le personnage effectue l’attaque sur la cible
+    active->PerformAttack(attackIndex - 1, *target);
+    RemoveDeadCharacters();
+
+}
+
+void CharacterManager::Heal()
 {
     // Sélection du personnage actif
 #undef max
@@ -197,31 +232,29 @@ void CharacterManager::CombatTurn()
         maxColsCount = 1; // Pour ne jamais avoir 0 colonnes
     }
     BuildPriorityTable2D(maxColsCount);
-	DisplayTable2D();
-    std::vector<Character*> allies = GetAllies();
+    DisplayTable2D();
+    allies = GetAllies();
     int idx = utils.AskInt("Choisissez un allie a jouer (1, 2, 3...) : ", 1, allies.size());
     Character* active = allies[idx - 1];
 
-    // Affichage et sélection de l’attaque
+    // Affichage et sélection du soin
     system("cls");
-	active->Display();
-    active->DisplayAttacks();
-    int attackIndex = utils.AskInt("Choisissez une attaque : ", 1, active->GetNbAttacks());
+    active->Display();
+    active->DisplayHeals();
+    int healIndex = utils.AskInt("Choisissez un soin : ", 1, active->GetNbHeals());
 
     // Sélection de la cible parmi les ennemis
     system("cls");
     BuildPriorityTable2D(maxColsCount);
     DisplayTable2D();
-    std::vector<Character*> enemies = GetEnemies();
-    int targetIndex = utils.AskInt("Choisissez la cible (1, 2, 3...) : ", 1, enemies.size());
-    Character* target = enemies[targetIndex - 1];
+    allies = GetAllies();
+    int targetIndex = utils.AskInt("Choisissez la cible (1, 2, 3...) : ", 1, allies.size());
+    Character* target = allies[targetIndex - 1];
 
     system("cls");
-    BuildPriorityTable2D(maxColsCount);
-    DisplayTable2D();
     // Le personnage effectue l’attaque sur la cible
-    active->PerformAttack(attackIndex - 1, *target);
-    RemoveDeadCharacters();
+    active->PerformHeals(healIndex - 1, *target);
+
 }
 
 int CharacterManager::GetAllyCount() const {
@@ -270,3 +303,19 @@ bool CharacterManager::AreAllEnemiesDead() const
     }
     return true; // Aucun ennemi survivant
 }
+
+void CharacterManager::EnemyATK()
+{
+    for (Character* c : enemies)
+    {
+        int attackIndex = Utils::GenerateRandomNumber(1, c->GetNbAttacks());
+        allies = GetEnemies();
+        int targetIndex = Utils::GenerateRandomNumber(1, allies.size());
+        Character* target = allies[targetIndex - 1];
+        c->PerformAttack(attackIndex - 1, *target);
+        RemoveDeadCharacters();
+    }
+
+}
+
+

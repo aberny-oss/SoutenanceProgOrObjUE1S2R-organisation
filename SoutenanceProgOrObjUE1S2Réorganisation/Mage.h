@@ -4,11 +4,11 @@
 #include <vector>
 #include "Character.h"
 
-class Warrior : public Character
+class Mage : public Character
 {
 public:
 
-    Warrior(const std::string& name, int level, int health, const std::string& team)
+    Mage(const std::string& name, int level, int health, const std::string& team)
         : Character(name, "Warrior", level, health, team)
     {
         attacks = { "Simple", "Heavy", "Ultime" }; // toutes les attaques
@@ -28,6 +28,5 @@ public:
     void PerformHeals(int healsIndex, Character& target) override;
     int GetHealsPV(size_t index) const;
     void SimpleHeal(Character& Atktarget);
-    
 };
 

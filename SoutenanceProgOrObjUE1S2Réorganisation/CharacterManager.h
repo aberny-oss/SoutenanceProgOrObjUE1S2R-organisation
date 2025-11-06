@@ -8,8 +8,8 @@
 
 class CharacterManager {
 private:
-    std::vector<std::unique_ptr<Character>> allies;
-    std::vector<std::unique_ptr<Character>> enemies;
+    std::vector<Character*> allies;
+    std::vector<Character*> enemies;
     std::vector<std::vector<Character*>> table2D;
     size_t tableRows;
     size_t tableCols;
@@ -19,8 +19,8 @@ public:
     CharacterManager() :tableRows(0), tableCols(0) {
 	}
 
-    void AddAlly(std::unique_ptr<Character> character);
-    void AddEnemy(std::unique_ptr<Character> character);
+    void AddAlly(Character* character);
+    void AddEnemy(Character* character);
 
     // Nombre de character
     size_t SizeAlly() const;
@@ -39,7 +39,10 @@ public:
     void BuildPriorityTable2D(size_t cols);
 	void DisplayTable2D() const;
 
-    void CombatTurn();
+
+    void Attack();
+
+    void Heal();
 
     int GetAllyCount() const;
     int GetEnemyCount() const;
@@ -48,5 +51,7 @@ public:
 
     bool AreAllPlayersDead() const;
     bool AreAllEnemiesDead() const;
+
+    void EnemyATK();
 
 };

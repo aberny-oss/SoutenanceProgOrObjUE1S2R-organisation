@@ -12,6 +12,7 @@ protected:
     int level;
     int health;
     std::vector<std::string> attacks;
+    std::vector<std::string> heals;
     std::string team;
 
 public:
@@ -25,15 +26,20 @@ public:
     std::string GetTeam() const;
     int GetHealth() const;
 
-    // Getter moderne
+    // Attaques
     int GetNbAttacks() const;
-
     virtual int GetAttackDamage(size_t index) const = 0;
     void DisplayAttacks() const;
     void AttackByIndex(int index);
-
     virtual void PerformAttack(int attackIndex, Character& target) = 0;
 
+    // Soins
+    int GetNbHeals() const;
+    virtual int GetHealsPV(size_t index) const = 0;
+    void DisplayHeals() const;
+    void HealsByIndex(int index);
+    virtual void PerformHeals(int healsIndex, Character& target) = 0;
+
     void TakeDamage(int dmg);
-    void Heal(int amount);
+    void TakeHeal(int amount);
 };

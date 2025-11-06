@@ -4,14 +4,14 @@
 #include <vector>
 #include "Character.h"
 
-class Warrior : public Character
+class Goblin : public Character
 {
 public:
 
-    Warrior(const std::string& name, int level, int health, const std::string& team)
+    Goblin(const std::string& name, int level, int health, const std::string& team)
         : Character(name, "Warrior", level, health, team)
     {
-        attacks = { "Simple", "Heavy", "Ultime" }; // toutes les attaques
+        attacks = { "Simple", "Heavy" }; // toutes les attaques
         heals = { "Soin" }; // toutes les soin
     }
 
@@ -22,12 +22,13 @@ public:
     int GetAttackDamage(size_t index) const;
     void SimpleAttack(Character& Atktarget);
     void HeavyAttack(Character& Atktarget);
-    void UltimeAttack(Character& Atktarget);
+    /*void UltimeAttack(Character& Atktarget);*/
 
     //Soins
     void PerformHeals(int healsIndex, Character& target) override;
     int GetHealsPV(size_t index) const;
     void SimpleHeal(Character& Atktarget);
-    
-};
 
+
+
+};
