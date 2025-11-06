@@ -11,15 +11,17 @@ protected:
     std::string type;
     int level;
     int health;
+    int healthMax;
     std::vector<std::string> attacks;
     std::vector<std::string> heals;
     std::string team;
+    double expUp;
     int exp;
     int expGain;
 
 public:
-    Character(const std::string& name, const std::string& type, int level, int health, const std::string& team, int exp, int expGain)
-        : name(name), type(type), level(level), health(health), team(team), exp(exp), expGain(expGain) {
+    Character(const std::string& name, const std::string& type, int level, int health, int healthMax, const std::string& team, double expUp, int exp, int expGain)
+        : name(name), type(type), level(level), health(health), healthMax(healthMax), team(team), expUp(expUp), exp(exp), expGain(expGain) {
     }
 
     virtual std::vector<std::string> Display() const = 0;  // Retourne l'ASCII art ligne par ligne

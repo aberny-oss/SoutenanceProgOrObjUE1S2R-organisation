@@ -5,18 +5,22 @@ void Game::Init() {
     for (int i = 1; i <= enemyCount; ++i) {
         int level = Utils::GenerateRandomNumber(1, 5);
         int whealth = 120 + (level - 1) * 20;
+        int whealthMax = whealth;
         int mhealth = 100 + (level - 1) * 20;
+        int mhealthMax = mhealth;
         int ghealth = 80 + (level - 1) * 20;
+        int ghealthMax = ghealth;
+        double expUp = 100 * pow(1.1, level - 1);
         std::string name = "Ennemy" + std::to_string(i);
 
         if (i == 1) {
-            characterManager->AddEnemy(std::make_unique<Warrior>(name, level, whealth, "Ennemy"));
+            characterManager->AddEnemy(std::make_unique<Warrior>(name, level, whealth, whealthMax, "Ennemy", expUp));
         }
         else if (i == 2) {
-            characterManager->AddEnemy(std::make_unique<Mage>(name, level, mhealth, "Ennemy"));
+            characterManager->AddEnemy(std::make_unique<Mage>(name, level, mhealth, mhealthMax, "Ennemy", expUp));
         }
         else if (i == 3) {
-            characterManager->AddEnemy(std::make_unique<Goblin>(name, level, ghealth, "Ennemy"));
+            characterManager->AddEnemy(std::make_unique<Goblin>(name, level, ghealth, ghealthMax, "Ennemy", expUp));
         }
         else
         {
@@ -25,13 +29,13 @@ void Game::Init() {
             switch (type)
             {
             case 1:
-                characterManager->AddEnemy(std::make_unique<Warrior>(name, level, whealth, "Ennemy"));
+                characterManager->AddEnemy(std::make_unique<Warrior>(name, level, whealth, whealthMax, "Ennemy", expUp));
                 break;
             case 2:
-                characterManager->AddEnemy(std::make_unique<Mage>(name, level, mhealth, "Ennemy"));
+                characterManager->AddEnemy(std::make_unique<Mage>(name, level, mhealth, mhealthMax, "Ennemy", expUp));
                 break;
             case 3:
-                characterManager->AddEnemy(std::make_unique<Goblin>(name, level, ghealth, "Ennemy"));
+                characterManager->AddEnemy(std::make_unique<Goblin>(name, level, ghealth, ghealthMax, "Ennemy", expUp));
                 break;
             }
 		}
@@ -52,23 +56,25 @@ void Game::CreateCharacter()
         std::transform(type.begin(), type.end(), type.begin(),
             [](unsigned char c) { return std::tolower(c); });
 
+        int level = 8;
+        double expUp = 100 * pow(1.1, level - 1);
         if (type == "warrior")
         {
-			int level = 8;
             int whealth = 120 + (level - 1) * 20;
-            return  characterManager->AddAlly(std::make_unique<Warrior>(name, level, whealth, "Player"));
+            int whealthMax = whealth;
+            return  characterManager->AddAlly(std::make_unique<Warrior>(name, level, whealth, whealthMax, "Player", expUp));
         }
         else if (type == "mage")
         {
-            int level = 8;
             int mhealth = 100 + (level - 1) * 20;
-            return  characterManager->AddAlly(std::make_unique<Mage>(name, level, mhealth, "Player"));
+            int mhealthMax = mhealth;
+            return  characterManager->AddAlly(std::make_unique<Mage>(name, level, mhealth, mhealthMax, "Player", expUp));
         }
         else if (type == "goblin")
         {
-            int level = 8;
             int ghealth = 80 + (level - 1) * 20;
-            return  characterManager->AddAlly(std::make_unique<Goblin>(name, level, ghealth, "Player"));
+            int ghealthMax = ghealth;
+            return  characterManager->AddAlly(std::make_unique<Goblin>(name, level, ghealth, ghealthMax, "Player", expUp));
         }
 
         system("cls");
@@ -235,7 +241,7 @@ void Game::ShowMenuWinFight()
 |         VICTOIRE !        |
 |   Tu as gagne le combat   |
 |  Tes heros sont vaillants |
-|    Qu veux-tu faire ?     |
+|    Que veux-tu faire ?    |
 | (c: Continuer, q: Quitter)|
 +===========================+
 )" << std::endl;

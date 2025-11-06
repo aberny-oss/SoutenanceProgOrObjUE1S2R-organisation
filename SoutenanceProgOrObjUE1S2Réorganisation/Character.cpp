@@ -135,10 +135,22 @@ void Character::TakeHeal(int amount) {
     std::cout << name << " se soigne de " << amount << " PV. PV actuels : " << health << "\n";
 }
 
+double calculerExpPourNiveau(int level)
+{
+    return 100 * pow(1.1, level - 1);
+}
+
+
 void Character::Experience(int experience)
 {
+    expUp = calculerExpPourNiveau(level);
     exp += experience;
     // Message à l’écran
     std::cout << name << " Gagne de l'exp " << experience << "Exp" << exp << "\n";
+    if (exp >= expUp)
+    {
+        level += 1;
+        exp = 0;
+    }
 }
 

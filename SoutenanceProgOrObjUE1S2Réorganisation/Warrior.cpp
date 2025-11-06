@@ -8,13 +8,19 @@ std::vector<std::string> Warrior::Display() const {
     displayName += std::string(12 - displayName.length(), ' ');
 
     // Préparer les stats
-    std::string stats = "Lv:" + std::to_string(level) + " HP:" + std::to_string(health);
-    stats = stats.substr(0, 12);
-    stats += std::string(12 - stats.length(), ' ');
+    std::string stats = "Lv:" + std::to_string(level) + " HP:" + std::to_string(health) + "/" + std::to_string(healthMax);
+    stats = stats.substr(0, 16);
+    stats += std::string(16 - stats.length(), ' ');
+
+    // Préparer les exp
+    std::string exps = "Exp:" + std::to_string(exp) + "/" + std::to_string(static_cast<int>(expUp));
+    exps = exps.substr(0, 10);
+    exps += std::string(10 - exps.length(), ' ');
 
     lines.push_back("+----------------+");
     lines.push_back("|  " + displayName + "  |");
-    lines.push_back("|  " + stats + "  |");
+    lines.push_back("|" + stats + "|");
+    lines.push_back("|   " + exps + "   |");
     lines.push_back(R"(|                |)");
     lines.push_back(R"(|      .-.       |)");
     lines.push_back(R"(|    __|=|__     |)");

@@ -8,8 +8,8 @@ class Goblin : public Character
 {
 public:
 
-    Goblin(const std::string& name, int level, int health, const std::string& team)
-        : Character(name, "Warrior", level, health, team, 0, 15)
+    Goblin(const std::string& name, int level, int health, int healthMax, const std::string& team, double expUp)
+        : Character(name, "Warrior", level, health, healthMax, team, expUp, 0, 30)
     {
         attacks = { "Simple", "Heavy" }; // toutes les attaques
         heals = { "Soin" }; // toutes les soin

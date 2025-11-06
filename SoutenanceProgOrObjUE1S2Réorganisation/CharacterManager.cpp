@@ -331,7 +331,7 @@ void CharacterManager::GainExp(Character* target)
         if (enemy && enemy->GetHealth() <= 0) {
             int gainexp = enemy->GetExpGain();
 
-
+            target->Experience(gainexp);
 
         }
     }
