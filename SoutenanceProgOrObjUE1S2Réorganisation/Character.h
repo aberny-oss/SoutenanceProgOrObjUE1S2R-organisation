@@ -14,10 +14,12 @@ protected:
     std::vector<std::string> attacks;
     std::vector<std::string> heals;
     std::string team;
+    int exp;
+    int expGain;
 
 public:
-    Character(const std::string& name, const std::string& type, int level, int health, const std::string& team)
-        : name(name), type(type), level(level), health(health), team(team) {
+    Character(const std::string& name, const std::string& type, int level, int health, const std::string& team, int exp, int expGain)
+        : name(name), type(type), level(level), health(health), team(team), exp(exp), expGain(expGain) {
     }
 
     virtual std::vector<std::string> Display() const = 0;  // Retourne l'ASCII art ligne par ligne
@@ -25,6 +27,10 @@ public:
     std::string GetName() const;
     std::string GetTeam() const;
     int GetHealth() const;
+
+    // EXP
+    int GetExp() const;
+    int GetExpGain() const;
 
     // Attaques
     int GetNbAttacks() const;
@@ -42,4 +48,6 @@ public:
 
     void TakeDamage(int dmg);
     void TakeHeal(int amount);
+
+    void Experience(int experience);
 };

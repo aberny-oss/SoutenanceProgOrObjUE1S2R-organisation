@@ -15,6 +15,15 @@ int Character::GetHealth() const
     return health;
 }
 
+int Character::GetExp() const
+{
+    return exp;
+}
+int Character::GetExpGain() const
+{
+    return expGain;
+}
+
 // Nombre d'attaques disponibles
 int Character::GetNbAttacks() const {
     return static_cast<int>(attacks.size());
@@ -124,5 +133,12 @@ void Character::TakeHeal(int amount) {
 
     // Message à l’écran
     std::cout << name << " se soigne de " << amount << " PV. PV actuels : " << health << "\n";
+}
+
+void Character::Experience(int experience)
+{
+    exp += experience;
+    // Message à l’écran
+    std::cout << name << " Gagne de l'exp " << experience << "Exp" << exp << "\n";
 }
 

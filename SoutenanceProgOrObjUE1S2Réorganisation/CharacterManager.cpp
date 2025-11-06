@@ -1,11 +1,11 @@
 ﻿#include "CharacterManager.h"
 
-void CharacterManager::AddAlly(Character* character) {
-    allies.push_back(character);
+void CharacterManager::AddAlly(std::unique_ptr<Character> character) {
+    allies.push_back(std::move(character));
 }
 
-void CharacterManager::AddEnemy(Character* character) {
-    enemies.push_back(character);
+void CharacterManager::AddEnemy(std::unique_ptr<Character> character) {
+    enemies.push_back(std::move(character));
 }
 
 // Nombre d'objets
@@ -36,8 +36,8 @@ Character* CharacterManager::GetEnemy(int index) {
 
 std::vector<Character*> CharacterManager::GetAllies() const {
     std::vector<Character*> result;
-    for (auto& ptr : allies) {
-        result.push_back(ptr.get());
+    for (const auto& ptr : allies) {
+        if (ptr) result.push_back(ptr.get());
     }
     return result;
 }
@@ -45,7 +45,7 @@ std::vector<Character*> CharacterManager::GetAllies() const {
 std::vector<Character*> CharacterManager::GetEnemies() const {
     std::vector<Character*> result;
     for (const auto& ptr : enemies) {
-        result.push_back(ptr.get());
+        if (ptr) result.push_back(ptr.get());
     }
     return result;
 }
@@ -196,10 +196,10 @@ void CharacterManager::Attack()
     {
         maxColsCount = 1; // Pour ne jamais avoir 0 colonnes
     }
-    /*std::vector<Character*> allies = GetAllies();*/
-    allies = GetAllies();
-    int idx = utils.AskInt("Choisissez un allie a jouer (1, 2, 3...) : ", 1, allies.size());
-    Character* active = allies[idx - 1];
+    std::vector<Character*> alliesList = GetAllies();
+    if (alliesList.empty()) return;
+    int idx = utils.AskInt("Choisissez un allie a jouer (1, 2, 3...) : ", 1, alliesList.size());
+    Character* active = alliesList[idx - 1];
 
     // Affichage et sélection de l’attaque
     system("cls");
@@ -211,13 +211,15 @@ void CharacterManager::Attack()
     system("cls");
     BuildPriorityTable2D(maxColsCount);
     DisplayTable2D();
-    enemies = GetEnemies();
-    int targetIndex = utils.AskInt("Choisissez la cible (1, 2, 3...) : ", 1, enemies.size());
-    Character* target = enemies[targetIndex - 1];
+    std::vector<Character*> enemiesList = GetEnemies();
+    if (enemiesList.empty()) return;
+    int targetIndex = utils.AskInt("Choisissez la cible (1, 2, 3...) : ", 1, enemiesList.size());
+    Character* target = enemiesList[targetIndex - 1];
 
     system("cls");
     // Le personnage effectue l’attaque sur la cible
     active->PerformAttack(attackIndex - 1, *target);
+    GainExp(active);
     RemoveDeadCharacters();
 
 }
@@ -233,9 +235,10 @@ void CharacterManager::Heal()
     }
     BuildPriorityTable2D(maxColsCount);
     DisplayTable2D();
-    allies = GetAllies();
-    int idx = utils.AskInt("Choisissez un allie a jouer (1, 2, 3...) : ", 1, allies.size());
-    Character* active = allies[idx - 1];
+    std::vector<Character*> alliesList = GetAllies();
+    if (alliesList.empty()) return;
+    int idx = utils.AskInt("Choisissez un allie a jouer (1, 2, 3...) : ", 1, alliesList.size());
+    Character* active = alliesList[idx - 1];
 
     // Affichage et sélection du soin
     system("cls");
@@ -247,9 +250,9 @@ void CharacterManager::Heal()
     system("cls");
     BuildPriorityTable2D(maxColsCount);
     DisplayTable2D();
-    allies = GetAllies();
-    int targetIndex = utils.AskInt("Choisissez la cible (1, 2, 3...) : ", 1, allies.size());
-    Character* target = allies[targetIndex - 1];
+    std::vector<Character*> targetsList = GetAllies();
+    int targetIndex = utils.AskInt("Choisissez la cible (1, 2, 3...) : ", 1, targetsList.size());
+    Character* target = targetsList[targetIndex - 1];
 
     system("cls");
     // Le personnage effectue l’attaque sur la cible
@@ -306,16 +309,35 @@ bool CharacterManager::AreAllEnemiesDead() const
 
 void CharacterManager::EnemyATK()
 {
-    for (Character* c : enemies)
+    std::vector<Character*> alliesList = GetAllies();
+
+    for (const std::unique_ptr<Character>& enemyUPtr : enemies)
     {
+        Character* c = enemyUPtr.get();
+        if (!c || alliesList.empty()) continue;
+
         int attackIndex = Utils::GenerateRandomNumber(1, c->GetNbAttacks());
-        allies = GetEnemies();
-        int targetIndex = Utils::GenerateRandomNumber(1, allies.size());
-        Character* target = allies[targetIndex - 1];
+        int targetIndex = Utils::GenerateRandomNumber(1, alliesList.size());
+        Character* target = alliesList[targetIndex - 1];
         c->PerformAttack(attackIndex - 1, *target);
         RemoveDeadCharacters();
+        alliesList = GetAllies(); // Met à jour la liste en cas de mort
+    }
+}
+
+void CharacterManager::GainExp(Character* target)
+{
+    for (const auto& enemy : enemies) {
+        if (enemy && enemy->GetHealth() <= 0) {
+            int gainexp = enemy->GetExpGain();
+
+
+
+        }
     }
 
+
 }
+
 
 

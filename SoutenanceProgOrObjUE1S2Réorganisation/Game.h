@@ -39,7 +39,6 @@ private:
 	void ShowMenuWinFight();
 
     void CombatTurn();
-    void CombatBotTurn();
 
     void HandleVictory();
     void HandleDefeat();

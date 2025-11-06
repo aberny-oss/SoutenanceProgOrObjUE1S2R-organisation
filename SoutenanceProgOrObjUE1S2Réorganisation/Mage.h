@@ -9,7 +9,7 @@ class Mage : public Character
 public:
 
     Mage(const std::string& name, int level, int health, const std::string& team)
-        : Character(name, "Warrior", level, health, team)
+        : Character(name, "Warrior", level, health, team, 0, 25)
     {
         attacks = { "Simple", "Heavy", "Ultime" }; // toutes les attaques
         heals = { "Soin" }; // toutes les soin
