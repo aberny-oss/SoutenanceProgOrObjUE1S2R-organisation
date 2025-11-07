@@ -127,7 +127,6 @@ void Game::Run() {
     }
 }
 
-
 void Game::Shutdown()
 {
     // Nettoyage si nécessaire
