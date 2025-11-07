@@ -223,13 +223,20 @@ void CharacterManager::Attack()
     }
 
     std::vector<Character*> alliesList = GetAllies();
-    std::vector<Character*> enemiesList = GetEnemies();
-    if (alliesList.empty() || enemiesList.empty())
+    if (alliesList.empty())
     {
         return;
     }
 
-    for (size_t i = 0; i < alliesList.size(); ++i) {
+    for (size_t i = 0; i < alliesList.size(); ++i)
+    {
+        std::vector<Character*> enemiesList = GetEnemies(); // Mise à jour à chaque tour
+        if (enemiesList.empty())
+        {
+            std::cout << "Plus d'ennemis ! Le combat est terminé.\n";
+            break; // Or return si tu veux sortir direct
+        }
+
         Character* active = alliesList[i];
 
         system("cls");
@@ -239,7 +246,7 @@ void CharacterManager::Attack()
 
         if (active->GetNbAttacks() == 0)
         {
-            continue; // Passe le tour si le perso n'a pas d'attaque
+            continue;
         }
 
         int attackIndex = utils.AskInt("Choisissez une attaque : ", 1, active->GetNbAttacks());
@@ -254,9 +261,10 @@ void CharacterManager::Attack()
         system("cls");
         active->PerformAttack(attackIndex - 1, *target);
         GainExp(active);
-        RemoveDeadCharacters();
+        RemoveDeadCharacters(); // Nettoyage, met à jour la vraie liste d'ennemis
     }
 }
+
 
 void CharacterManager::Heal()
 {
