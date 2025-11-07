@@ -28,7 +28,6 @@ std::string Utils::AskStr(const std::string& msg, const std::vector<std::string>
                 break;
             }
         }
-
         if (!valid)
         {
             std::cout << "Commande incorrecte ! Réessaie.\n";
