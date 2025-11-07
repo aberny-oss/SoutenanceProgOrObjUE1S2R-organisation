@@ -11,26 +11,25 @@ void Game::Init()
         int mhealth = 100 + (level - 1) * (20 + 5 * combatCount);
         int ghealth = 80 + (level - 1) * (20 + 5 * combatCount);
         double expUp = 100 * pow(1.1 + 0.03 * combatCount, level - 1); // Plus d'XP et scaling
-        int xpGain = 80 * pow(1.13, level - 1);
+        int xpGain = 50 * pow(1.13, level - 1);
 
         std::string name = "Ennemy" + std::to_string(i + (combatCount - 1) * enemyCount);
 
         int type = Utils::GenerateRandomNumber(1, 3);
         switch (type) {
         case 1:
-            characterManager->AddEnemy(std::make_unique<Warrior>(name, level, whealth, whealth, "Ennemy", expUp));
+            characterManager->AddEnemy(std::make_unique<Warrior>(name, level, whealth, whealth, "Ennemy", expUp, xpGain));
             break;
         case 2:
-            characterManager->AddEnemy(std::make_unique<Mage>(name, level, mhealth, mhealth, "Ennemy", expUp));
+            characterManager->AddEnemy(std::make_unique<Mage>(name, level, mhealth, mhealth, "Ennemy", expUp, xpGain));
             break;
         case 3:
-            characterManager->AddEnemy(std::make_unique<Goblin>(name, level, ghealth, ghealth, "Ennemy", expUp));
+            characterManager->AddEnemy(std::make_unique<Goblin>(name, level, ghealth, ghealth, "Ennemy", expUp, xpGain));
             break;
         }
     }
-    characterManager->AddNeutre(std::make_unique<Trader>("Alexis", "Neutre", 0));
+    characterManager->AddNeutre(std::make_unique<Trader>("Alexis", "Neutre", 0, 250));
 }
-
 
 void Game::CreateCharacter()
 {
@@ -50,11 +49,12 @@ void Game::CreateCharacter()
 
             int level = 1;
             double expUp = 100 * pow(1.1, level - 1);
+            int xpGain = 50 * pow(1.13, level - 1);
             if (type == "warrior")
             {
                 int whealth = 120 + (level - 1) * 20;
                 int whealthMax = whealth;
-                characterManager->AddAlly(std::make_unique<Warrior>(name, level, whealth, whealthMax, "Player", expUp));
+                characterManager->AddAlly(std::make_unique<Warrior>(name, level, whealth, whealthMax, "Player", expUp, xpGain));
                 system("cls");
                 break; // veux créer un autre allié ou sortir
             }
@@ -62,7 +62,7 @@ void Game::CreateCharacter()
             {
                 int mhealth = 100 + (level - 1) * 20;
                 int mhealthMax = mhealth;
-                characterManager->AddAlly(std::make_unique<Mage>(name, level, mhealth, mhealthMax, "Player", expUp));
+                characterManager->AddAlly(std::make_unique<Mage>(name, level, mhealth, mhealthMax, "Player", expUp, xpGain));
                 system("cls");
                 break;
             }
@@ -70,7 +70,7 @@ void Game::CreateCharacter()
             {
                 int ghealth = 80 + (level - 1) * 20;
                 int ghealthMax = ghealth;
-                characterManager->AddAlly(std::make_unique<Goblin>(name, level, ghealth, ghealthMax, "Player", expUp));
+                characterManager->AddAlly(std::make_unique<Goblin>(name, level, ghealth, ghealthMax, "Player", expUp, xpGain));
                 system("cls");
                 break;
             }
