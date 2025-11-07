@@ -8,8 +8,8 @@ class Mage : public Character
 {
 public:
 
-    Mage(const std::string& name, int level, int health, int healthMax, const std::string& team, double expUp)
-        : Character(name, "Warrior", level, health, healthMax, team, expUp, 0, 40)
+    Mage(const std::string& name, int level, int health, int healthMax, const std::string& team, double expUp, double expGain)
+        : Character(name, "Mage", level, health, healthMax, team, expUp, 0, expGain, 200, 60)
     {
         attacks = { "Simple", "Heavy", "Ultime" }; // toutes les attaques
         heals = { "Soin" }; // toutes les soin
@@ -19,14 +19,14 @@ public:
 
     // Attaques
     void PerformAttack(int attackIndex, Character& target) override;
-    int GetAttackDamage(size_t index) const;
+    int GetAttackDamage(size_t index) const override;
     void SimpleAttack(Character& Atktarget);
     void HeavyAttack(Character& Atktarget);
     void UltimeAttack(Character& Atktarget);
 
     //Soins
     void PerformHeals(int healsIndex, Character& target) override;
-    int GetHealsPV(size_t index) const;
+    int GetHealsPV(size_t index) const override;
     void SimpleHeal(Character& Atktarget);
 };
 

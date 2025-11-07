@@ -129,8 +129,10 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Goblin.cpp" />
     <ClCompile Include="InputManager.cpp" />
+    <ClCompile Include="ItemManager.cpp" />
     <ClCompile Include="Mage.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Trader.cpp" />
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="Warrior.cpp" />
   </ItemGroup>
@@ -141,7 +143,9 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="Goblin.h" />
     <ClInclude Include="InputManager.h" />
+    <ClInclude Include="ItemManager.h" />
     <ClInclude Include="Mage.h" />
+    <ClInclude Include="Trader.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="Warrior.h" />
   </ItemGroup>

@@ -57,6 +57,12 @@
     <ClCompile Include="InputManager.cpp">
       <Filter>Fichiers sources\Manager</Filter>
     </ClCompile>
+    <ClCompile Include="ItemManager.cpp">
+      <Filter>Fichiers sources\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Trader.cpp">
+      <Filter>Fichiers sources\Character</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -85,6 +91,12 @@
     </ClInclude>
     <ClInclude Include="CharacterManager.h">
       <Filter>Fichiers d%27en-tête\manager</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemManager.h">
+      <Filter>Fichiers d%27en-tête\manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Trader.h">
+      <Filter>Fichiers d%27en-tête\Character</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

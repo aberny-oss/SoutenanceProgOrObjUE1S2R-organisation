@@ -37,7 +37,6 @@ std::vector<std::string> Warrior::Display() const {
 }
 
 // Attaques
-
 void Warrior::PerformAttack(int attackIndex, Character& target)
 {
     if (attackIndex == 0)
@@ -101,7 +100,6 @@ void Warrior::UltimeAttack(Character& Atktarget)
 }
 
 //Soins
-
 void Warrior::PerformHeals(int healsIndex, Character& target)
 {
     if (healsIndex == 0)
@@ -148,4 +146,3 @@ void Warrior::SimpleHeal(Character& Healtarget)
     // ... applique les soins, affiche etc.
     Healtarget.TakeHeal(healamout);
 }
-

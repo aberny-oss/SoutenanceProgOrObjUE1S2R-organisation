@@ -10,6 +10,7 @@ class CharacterManager {
 private:
     std::vector<std::unique_ptr<Character>> allies;
     std::vector<std::unique_ptr<Character>> enemies;
+	std::vector<std::unique_ptr<Character>> neutre;
     std::vector<std::vector<Character*>> table2D;
     size_t tableRows;
     size_t tableCols;
@@ -21,6 +22,7 @@ public:
 
     void AddAlly(std::unique_ptr<Character> character);
     void AddEnemy(std::unique_ptr<Character> character);
+	void AddNeutre(std::unique_ptr<Character> character);
 
     // Nombre de character
     size_t SizeAlly() const;
@@ -29,16 +31,15 @@ public:
 
     Character* GetAlly(int index);
     Character* GetEnemy(int index);
+	Character* GetNeutre(int index);
 
     std::vector<Character*> GetAllies()const;
     std::vector<Character*> GetEnemies() const;
-
 
     void BuildTeamTable2D(size_t rows, size_t cols);
     void BuildEnemyTable2D(size_t rows, size_t cols);
     void BuildPriorityTable2D(size_t cols);
 	void DisplayTable2D() const;
-
 
     void Attack();
 
@@ -55,5 +56,6 @@ public:
     void EnemyATK();
 
     void GainExp(Character* target);
+    void GainGold(Character* target);
 
 };

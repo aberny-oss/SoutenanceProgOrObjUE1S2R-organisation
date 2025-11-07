@@ -1,12 +1,13 @@
 #include "ASCIIART.h"
 
-void ASCIIART::SetInputValue(const char& value) {
+void ASCIIART::SetInputValue(const char& value)
+{
     inputValue = value;
 }
 
-void ASCIIART::ArtConsoleMenu(int action) {
+void ASCIIART::ArtConsoleMenu(int action)
+{
     char displayZone = inputValue;
-
     switch (action) {
     case 0:
         system("cls");

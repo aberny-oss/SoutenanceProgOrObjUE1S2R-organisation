@@ -4,7 +4,6 @@
 #include <iostream>
 #include <iomanip>
 
-
 class Character {
 protected:
     std::string name;
@@ -17,11 +16,13 @@ protected:
     std::string team;
     double expUp;
     int exp;
-    int expGain;
+    double expGain;
+	int gold;
+	int goldGain;
 
 public:
-    Character(const std::string& name, const std::string& type, int level, int health, int healthMax, const std::string& team, double expUp, int exp, int expGain)
-        : name(name), type(type), level(level), health(health), healthMax(healthMax), team(team), expUp(expUp), exp(exp), expGain(expGain) {
+    Character(const std::string& name, const std::string& type, int level, int health, int healthMax, const std::string& team, double expUp, int exp, double expGain, int gold, int goldGain)
+        : name(name), type(type), level(level), health(health), healthMax(healthMax), team(team), expUp(expUp), exp(exp), expGain(expGain), gold(gold), goldGain(goldGain) {
     }
 
     virtual std::vector<std::string> Display() const = 0;  // Retourne l'ASCII art ligne par ligne
@@ -51,5 +52,11 @@ public:
     void TakeDamage(int dmg);
     void TakeHeal(int amount);
 
-    void Experience(int experience);
+    void Experience(double experience);
+
+    //Gold
+    int GetGold() const;
+	int GetGoldGain() const;
+	void AddGold(int amount);
+
 };

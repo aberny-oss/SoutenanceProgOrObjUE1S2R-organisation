@@ -1,11 +1,18 @@
 ﻿#include "CharacterManager.h"
 
-void CharacterManager::AddAlly(std::unique_ptr<Character> character) {
+void CharacterManager::AddAlly(std::unique_ptr<Character> character)
+{
     allies.push_back(std::move(character));
 }
 
-void CharacterManager::AddEnemy(std::unique_ptr<Character> character) {
+void CharacterManager::AddEnemy(std::unique_ptr<Character> character)
+{
     enemies.push_back(std::move(character));
+}
+
+void CharacterManager::AddNeutre(std::unique_ptr<Character> character)
+{
+    neutre.push_back(std::move(character));
 }
 
 // Nombre d'objets
@@ -20,32 +27,52 @@ size_t CharacterManager::SizeEnemy() const
     return enemies.size();
 }
 
-Character* CharacterManager::GetAlly(int index) {
-    if (index >= 0 && index < static_cast<int>(allies.size())) {
+Character* CharacterManager::GetAlly(int index)
+{
+    if (index >= 0 && index < static_cast<int>(allies.size()))
+    {
         return allies[index].get();
     }
     return nullptr;
 }
 
-Character* CharacterManager::GetEnemy(int index) {
-    if (index >= 0 && index < static_cast<int>(enemies.size())) {
+Character* CharacterManager::GetEnemy(int index)
+{
+    if (index >= 0 && index < static_cast<int>(enemies.size()))
+    {
         return enemies[index].get();
     }
     return nullptr;
 }
 
-std::vector<Character*> CharacterManager::GetAllies() const {
+Character* CharacterManager::GetNeutre(int index) {
+    if (index >= 0 && index < static_cast<int>(neutre.size()))
+    {
+        return neutre[index].get();
+    }
+    return nullptr;
+}
+
+std::vector<Character*> CharacterManager::GetAllies() const
+{
     std::vector<Character*> result;
     for (const auto& ptr : allies) {
-        if (ptr) result.push_back(ptr.get());
+        if (ptr)
+        {
+            result.push_back(ptr.get());
+        }
     }
     return result;
 }
 
-std::vector<Character*> CharacterManager::GetEnemies() const {
+std::vector<Character*> CharacterManager::GetEnemies() const
+{
     std::vector<Character*> result;
     for (const auto& ptr : enemies) {
-        if (ptr) result.push_back(ptr.get());
+        if (ptr)
+        {
+            result.push_back(ptr.get());
+        }
     }
     return result;
 }
@@ -76,7 +103,6 @@ void CharacterManager::BuildTeamTable2D(size_t rows, size_t cols)
         {
             return; // tableau plein
         }
-       
     }
 }
 
@@ -105,7 +131,6 @@ void CharacterManager::BuildEnemyTable2D(size_t rows, size_t cols)
         {
             return; // tableau plein
         }
-
     }
 }
 
@@ -134,8 +159,6 @@ void CharacterManager::BuildPriorityTable2D(size_t cols)
         }
     }
 }
-
-
 
 void CharacterManager::DisplayTable2D() const
 {
@@ -178,7 +201,10 @@ void CharacterManager::DisplayTable2D() const
             // 3. Calcul du padding global pour centrer la LIGNE ENTIÈRE
             int padding = (term_width - static_cast<int>(line_content.size())) / 2;
             {
-                if (padding > 0) std::cout << std::string(padding, ' ');
+                if (padding > 0)
+                {
+                    std::cout << std::string(padding, ' ');
+                }
             }
             std::cout << line_content << "\n";
         }
@@ -189,82 +215,100 @@ void CharacterManager::DisplayTable2D() const
 
 void CharacterManager::Attack()
 {
-    // Sélection du personnage actif
 #undef max
     size_t maxColsCount = std::max(GetAllyCount(), GetEnemyCount());
     if (maxColsCount == 0)
     {
-        maxColsCount = 1; // Pour ne jamais avoir 0 colonnes
+        maxColsCount = 1;
     }
+
     std::vector<Character*> alliesList = GetAllies();
-    if (alliesList.empty()) return;
-    int idx = utils.AskInt("Choisissez un allie a jouer (1, 2, 3...) : ", 1, alliesList.size());
-    Character* active = alliesList[idx - 1];
-
-    // Affichage et sélection de l’attaque
-    system("cls");
-    active->Display();
-    active->DisplayAttacks();
-    int attackIndex = utils.AskInt("Choisissez une attaque : ", 1, active->GetNbAttacks());
-
-    // Sélection de la cible parmi les ennemis
-    system("cls");
-    BuildPriorityTable2D(maxColsCount);
-    DisplayTable2D();
     std::vector<Character*> enemiesList = GetEnemies();
-    if (enemiesList.empty()) return;
-    int targetIndex = utils.AskInt("Choisissez la cible (1, 2, 3...) : ", 1, enemiesList.size());
-    Character* target = enemiesList[targetIndex - 1];
+    if (alliesList.empty() || enemiesList.empty())
+    {
+        return;
+    }
 
-    system("cls");
-    // Le personnage effectue l’attaque sur la cible
-    active->PerformAttack(attackIndex - 1, *target);
-    GainExp(active);
-    RemoveDeadCharacters();
+    for (size_t i = 0; i < alliesList.size(); ++i) {
+        Character* active = alliesList[i];
 
+        system("cls");
+        std::cout << "Tour d'attaque pour : " << active->GetName() << std::endl;
+        active->Display();
+        active->DisplayAttacks();
+
+        if (active->GetNbAttacks() == 0)
+        {
+            continue; // Passe le tour si le perso n'a pas d'attaque
+        }
+
+        int attackIndex = utils.AskInt("Choisissez une attaque : ", 1, active->GetNbAttacks());
+
+        system("cls");
+        BuildPriorityTable2D(maxColsCount);
+        DisplayTable2D();
+
+        int targetIndex = utils.AskInt("Choisissez la cible (1, 2, 3...) : ", 1, enemiesList.size());
+        Character* target = enemiesList[targetIndex - 1];
+
+        system("cls");
+        active->PerformAttack(attackIndex - 1, *target);
+        GainExp(active);
+        RemoveDeadCharacters();
+    }
 }
 
 void CharacterManager::Heal()
 {
-    // Sélection du personnage actif
 #undef max
     size_t maxColsCount = std::max(GetAllyCount(), GetEnemyCount());
     if (maxColsCount == 0)
     {
-        maxColsCount = 1; // Pour ne jamais avoir 0 colonnes
+        maxColsCount = 1;
     }
     BuildPriorityTable2D(maxColsCount);
     DisplayTable2D();
+
     std::vector<Character*> alliesList = GetAllies();
-    if (alliesList.empty()) return;
-    int idx = utils.AskInt("Choisissez un allie a jouer (1, 2, 3...) : ", 1, alliesList.size());
-    Character* active = alliesList[idx - 1];
+    if (alliesList.empty())
+    {
+        return;
+    }
 
-    // Affichage et sélection du soin
-    system("cls");
-    active->Display();
-    active->DisplayHeals();
-    int healIndex = utils.AskInt("Choisissez un soin : ", 1, active->GetNbHeals());
+    for (size_t i = 0; i < alliesList.size(); ++i) {
+        Character* active = alliesList[i];
 
-    // Sélection de la cible parmi les ennemis
-    system("cls");
-    BuildPriorityTable2D(maxColsCount);
-    DisplayTable2D();
-    std::vector<Character*> targetsList = GetAllies();
-    int targetIndex = utils.AskInt("Choisissez la cible (1, 2, 3...) : ", 1, targetsList.size());
-    Character* target = targetsList[targetIndex - 1];
+        system("cls");
+        std::cout << "Tour de soin pour : " << active->GetName() << std::endl;
+        active->Display();
+        active->DisplayHeals();
 
-    system("cls");
-    // Le personnage effectue l’attaque sur la cible
-    active->PerformHeals(healIndex - 1, *target);
+        if (active->GetNbHeals() == 0)
+        {
+            continue; // Ne passe pas le tour si le perso n'a pas de soin
+        }
 
+        int healIndex = utils.AskInt("Choisissez un soin : ", 1, active->GetNbHeals());
+
+        system("cls");
+        BuildPriorityTable2D(maxColsCount);
+        DisplayTable2D();
+        std::vector<Character*> targetsList = GetAllies();
+        int targetIndex = utils.AskInt("Choisissez la cible (1, 2, 3...) : ", 1, targetsList.size());
+        Character* target = targetsList[targetIndex - 1];
+
+        system("cls");
+        active->PerformHeals(healIndex - 1, *target);
+    }
 }
 
-int CharacterManager::GetAllyCount() const {
+int CharacterManager::GetAllyCount() const
+{
     return static_cast<int>(allies.size());
 }
 
-int CharacterManager::GetEnemyCount() const {
+int CharacterManager::GetEnemyCount() const
+{
     return static_cast<int>(enemies.size());
 }
 
@@ -273,7 +317,8 @@ void CharacterManager::RemoveDeadCharacters()
     // Pour les alliés
     allies.erase(
         std::remove_if(allies.begin(), allies.end(),
-            [](const std::unique_ptr<Character>& c) {
+            [](const std::unique_ptr<Character>& c)
+            {
                 return c && c->GetHealth() <= 0 && c->GetTeam() == "Player";
             }),
         allies.end());
@@ -281,7 +326,8 @@ void CharacterManager::RemoveDeadCharacters()
     // Pour les ennemis
     enemies.erase(
         std::remove_if(enemies.begin(), enemies.end(),
-            [](const std::unique_ptr<Character>& c) {
+            [](const std::unique_ptr<Character>& c)
+            {
                 return c && c->GetHealth() <= 0 && c->GetTeam() == "Ennemy";
             }),
         enemies.end());
@@ -290,7 +336,8 @@ void CharacterManager::RemoveDeadCharacters()
 bool CharacterManager::AreAllPlayersDead() const
 {
     for (const auto& ally : allies) {
-        if (ally && ally->GetHealth() > 0) {
+        if (ally && ally->GetHealth() > 0)
+        {
             return false; // Au moins un joueur vivant
         }
     }
@@ -300,7 +347,8 @@ bool CharacterManager::AreAllPlayersDead() const
 bool CharacterManager::AreAllEnemiesDead() const
 {
     for (const auto& enemy : enemies) {
-        if (enemy && enemy->GetHealth() > 0) {
+        if (enemy && enemy->GetHealth() > 0)
+        {
             return false; // Au moins un ennemi vivant
         }
     }
@@ -314,7 +362,10 @@ void CharacterManager::EnemyATK()
     for (const std::unique_ptr<Character>& enemyUPtr : enemies)
     {
         Character* c = enemyUPtr.get();
-        if (!c || alliesList.empty()) continue;
+        if (!c || alliesList.empty())
+        {
+            continue;
+        }
 
         int attackIndex = Utils::GenerateRandomNumber(1, c->GetNbAttacks());
         int targetIndex = Utils::GenerateRandomNumber(1, alliesList.size());
@@ -328,16 +379,21 @@ void CharacterManager::EnemyATK()
 void CharacterManager::GainExp(Character* target)
 {
     for (const auto& enemy : enemies) {
-        if (enemy && enemy->GetHealth() <= 0) {
+        if (enemy && enemy->GetHealth() <= 0)
+        {
             int gainexp = enemy->GetExpGain();
-
             target->Experience(gainexp);
-
         }
     }
-
-
 }
 
+void CharacterManager::GainGold(Character* target)
+{
+    for (const auto& enemy : enemies) {
+        if (enemy && enemy->GetHealth() <= 0) {
+            int gaingold = enemy->GetGoldGain();
 
-
+            target->AddGold(gaingold);
+        }
+    }
+}

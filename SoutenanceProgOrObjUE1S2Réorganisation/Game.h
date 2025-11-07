@@ -6,11 +6,14 @@
 #include <limits>
 #include "CharacterManager.h"
 #include "InputManager.h"
+#include "ItemManager.h"
 #include "ASCIIART.h"
 #include "Character.h"
 #include "Warrior.h"
 #include "Mage.h"
 #include "Goblin.h"
+#include "Trader.h"
+#include "Utils.h"
 
 enum class GameState {
     MENU,
@@ -32,11 +35,14 @@ private:
     int combatIndex;
     ASCIIART art;
     bool firstIteration;
+	Utils utils;
+    int combatCount;
 
     //menu
     void ShowMenuPrincipal();
     void ShowMenuPerso();
 	void ShowMenuWinFight();
+	void ShowMenuTrader();
 
     void CombatTurn();
 
@@ -52,7 +58,8 @@ public:
         characterManager(std::make_unique<CharacterManager>()),
         inputManager(std::make_unique<InputManager>()),
 		art(),
-        firstIteration(true)
+        firstIteration(true),
+		combatCount(1)
     {
     }
 
@@ -63,22 +70,6 @@ public:
 
     //void Display();        // Affichage
     void ChangeState(GameState newState);
+
 };
-
-
-//// Afficher les alliés
-//for (int i = 0; i < characterManager->GetAllyCount(); ++i) {
-//    Character* ally = characterManager->GetAlly(i);
-//    if (ally) {
-//        std::cout << "Allié: " << ally->GetName() << " (PV: " << ally->GetHealth() << ")" << std::endl;
-//    }
-//}
-//
-//// Afficher les ennemis
-//for (int j = 0; j < characterManager->GetEnemyCount(); ++j) {
-//    Character* enemy = characterManager->GetEnemy(j);
-//    if (enemy) {
-//        std::cout << "Ennemi: " << enemy->GetName() << " (PV: " << enemy->GetHealth() << ")" << std::endl;
-//    }
-//}
 

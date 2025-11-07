@@ -22,14 +22,6 @@ Action InputManager::GetAction() {
     }
 }
 
-//char InputManager::GetLastKey() const {
-//    return lastKey;
-//}
-
-//bool InputManager::IsKeyPressed(char key) {
-//    return lastKey == key;
-//}
-
 char InputManager::AskMenuKey(const std::vector<char>& allowedKeys) {
     char key;
     std::cin >> key;
